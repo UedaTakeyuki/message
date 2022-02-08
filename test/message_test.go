@@ -7,10 +7,54 @@ import (
 	//	"github.com/UedaTakeyuki/message"
 )
 
+const originalMessage = "some plaintext"
+
+func encriptAndEncode(plainmessage []byte) (crypticmessage string, mac string) {
+
+	// new AESCTR
+	m := new(message.AESCTR)
+
+	// set key
+	m.SetKey([]byte("01234567890123456789012345678901"))
+
+	// set plainmessage for encription
+	m.SetPlainMessage(plainmessage)
+
+	// get criptic message
+	crypticmessage = m.GetEncodedEncriptedMessage()
+	log.Println("crypticmessage:", crypticmessage)
+
+	// get Authentication Code of this message
+	mac = m.GetPlainMessageMac()
+	log.Println("hmac of plaintext:", mac)
+
+	return
+}
+
+func decodeAndDecript(crypticmessage string, mac string) {
+
+	// new AESCTR
+	m := new(message.AESCTR)
+
+	// set key
+	m.SetKey([]byte("01234567890123456789012345678901"))
+
+	// set criptic message string
+	m.SetEncodedEncriptedMessage(crypticmessage)
+
+	// get original message from cryptic message
+	decreiptedMessage := m.GetDecriptedMessage()
+	log.Println("decreiptedMessage:", string(decreiptedMessage))
+
+	// confirm Authentication Code
+	result, _ := m.ConfirmMacFromstring(mac)
+	log.Println("Confrimation result is", result)
+}
+
 func Test_AESCTR(t *testing.T) {
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds | log.Lshortfile)
 
-	originalMessage := "some plaintext"
+	//	originalMessage := "some plaintext"
 
 	// new AESCTR
 	m := new(message.AESCTR)
@@ -66,4 +110,6 @@ func Test_AESCTR(t *testing.T) {
 		t.Errorf("got: %v\nwant: %v", string(decreiptedMessage), originalMessage)
 	}
 
+	crypticmessage, mac := encriptAndEncode([]byte(originalMessage))
+	decodeAndDecript(crypticmessage, mac)
 }

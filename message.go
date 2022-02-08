@@ -24,6 +24,7 @@ type AESCTR struct {
 	aesctr             cipher.Stream
 }
 
+// Set encription key. This key is also used by AES CTR and hash function SHA-246 for HMAC
 func (m *AESCTR) SetKey(key []byte) {
 	l := len(key)
 	if l != 16 && l != 24 && l != 32 {
@@ -33,6 +34,7 @@ func (m *AESCTR) SetKey(key []byte) {
 	m.key = key
 }
 
+// Get randombyte from /dev/urandom for IV
 func (m *AESCTR) SetNewIV() {
 	var err error
 	/* A 256 bit key */
@@ -44,6 +46,7 @@ func (m *AESCTR) SetNewIV() {
 	}
 }
 
+// Set plain message to encript, get IV, and encript.
 func (m *AESCTR) SetPlainMessage(plainmessage []byte) {
 	if m.key == nil {
 		log.Println("set key first.")
@@ -100,8 +103,8 @@ func (m *AESCTR) GetEncriptedMessage() (t []byte) {
 	return
 }
 
-func (m *AESCTR) GetEncodedEncriptedMessage() (t []byte) {
-	t = ([]byte)(base64.URLEncoding.EncodeToString(m.GetEncriptedMessage()))
+func (m *AESCTR) GetEncodedEncriptedMessage() (t string) {
+	t = base64.URLEncoding.EncodeToString(m.GetEncriptedMessage())
 	return
 }
 
@@ -114,11 +117,11 @@ func (m *AESCTR) SetEncriptedMessage(t []byte) {
 	//	log.Println("SetEncriptedMessage", t, m.iv, m.plainmessage)
 }
 
-func (m *AESCTR) SetEncodedEncriptedMessage(t []byte) {
+func (m *AESCTR) SetEncodedEncriptedMessage(t string) {
 	if m.key == nil {
 		log.Println("set key first.")
 	}
-	messageEncriptedDecoded, err := base64.URLEncoding.DecodeString(string(t))
+	messageEncriptedDecoded, err := base64.URLEncoding.DecodeString(t)
 	if err != nil {
 		log.Println(err)
 	}
