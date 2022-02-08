@@ -3,6 +3,7 @@
 An out-of-the-box cryptographic message communication.
 
 ## how to use
+```
 import(
   "github.com/UedaTakeyuki/message"
 )
@@ -67,6 +68,7 @@ func Test_AESCTR(t *testing.T) {
 	}
 
 }
+```
 
 ## supported algorithm
 - [x] AES CTR + HMAC (encription: AES CTR, message authentication: HMAC)
