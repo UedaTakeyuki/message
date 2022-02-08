@@ -60,7 +60,7 @@ func (m *Message) GetEncriptedMessage() (t []byte) {
 }
 
 func (m *Message) GetEncodedEncriptedMessage() (t []byte) {
-	t = base64.URLEncoding.EncodeToString(m.GetEncriptedMessage())
+	t = ([]byte)(base64.URLEncoding.EncodeToString(m.GetEncriptedMessage()))
 	return
 }
 
@@ -76,7 +76,7 @@ func (m *Message) SetEncodedEncriptedMessage(t []byte) {
 	if m.key == nil {
 		log.Println("set key first.")
 	}
-	messageEncriptedDecoded, err := base64.URLEncoding.DecodeString(t)
+	messageEncriptedDecoded, err := base64.URLEncoding.DecodeString(string(t))
 	if err != nil {
 		log.Println(err)
 	}
