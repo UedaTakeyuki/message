@@ -23,7 +23,7 @@ func encriptAndEncode(plainmessage []byte) (crypticmessage string) {
 
 	// get criptic message
 	crypticmessage = m.GetEncodedEncriptedMessage()
-	log.Println("crypticmessage", crypticmessage)
+	log.Println("crypticmessage:", crypticmessage)
 
 	return
 }
@@ -41,7 +41,7 @@ func decodeAndDecript(crypticmessage string) {
 
 	// get original message from cryptic message
 	decreiptedMessage := m.GetDecriptedMessage()
-	log.Println("decreiptedMessage", string(decreiptedMessage))
+	log.Println("decreiptedMessage:", string(decreiptedMessage))
 
 }
 
@@ -54,8 +54,8 @@ func main(){
 Output message:   
 
 ```
-crypticmessage L0z3LU3pmWNUvGr-w1eSzRLZpcuajcjy84Qa4Zq1
-decreiptedMessage some plaintext
+crypticmessage: L0z3LU3pmWNUvGr-w1eSzRLZpcuajcjy84Qa4Zq1
+decreiptedMessage: some plaintext
 ```
 ### 2. encript and authenticate & decript and authentication confirm
 ```
@@ -76,11 +76,11 @@ func encriptAndEncode(plainmessage []byte) (crypticmessage string, mac string) {
 
 	// get criptic message
 	crypticmessage = m.GetEncodedEncriptedMessage()
-	log.Println("crypticmessage", crypticmessage)
+	log.Println("crypticmessage:", crypticmessage)
 
 	// get Authentication Code of this message
 	mac = m.GetPlainMessageMac()
-	log.Println("hmac of plaintext", mac)
+	log.Println("hmac of plaintext:", mac)
 
 	return
 }
@@ -98,7 +98,7 @@ func decodeAndDecript(crypticmessage string, mac string) {
 
 	// get original message from cryptic message
 	decreiptedMessage := m.GetDecriptedMessage()
-	log.Println("decreiptedMessage", string(decreiptedMessage))
+	log.Println("decreiptedMessage:", string(decreiptedMessage))
 
 	// confirm Authentication Code
 	result, _ := m.ConfirmMacFromstring(mac)
@@ -114,9 +114,9 @@ func main(){
 Output message:   
 
 ```
-crypticmessage L0z3LU3pmWNUvGr-w1eSzRLZpcuajcjy84Qa4Zq1
-hmac of plaintext cdd1aba74001d40e980de7cee69dc10d8495a609936bc835da4b30cb33ab6f50
-decreiptedMessage some plaintext
+crypticmessage: L0z3LU3pmWNUvGr-w1eSzRLZpcuajcjy84Qa4Zq1
+hmac of plaintext: cdd1aba74001d40e980de7cee69dc10d8495a609936bc835da4b30cb33ab6f50
+decreiptedMessage: some plaintext
 Confrimation result is true
 ```
 
