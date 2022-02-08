@@ -3,15 +3,14 @@
 An out-of-the-box cryptographic message communication.
 
 ## how to use
+
+### 1. encript & decript
 ```
 import(
-  "github.com/UedaTakeyuki/message"
+	  "github.com/UedaTakeyuki/message"
 )
 
-func Test_AESCTR(t *testing.T) {
-	log.SetFlags(log.LstdFlags | log.Lmicroseconds | log.Lshortfile)
-
-	originalMessage := "some plaintext"
+func encriptAndEncode(plainmessage []byte) (crypticmessage string, mac string) {
 
 	// new AESCTR
 	m := new(message.AESCTR)
@@ -20,54 +19,52 @@ func Test_AESCTR(t *testing.T) {
 	m.SetKey([]byte("01234567890123456789012345678901"))
 
 	// set plainmessage for encription
-	m.SetPlainMessage([]byte(originalMessage))
+	m.SetPlainMessage(plainmessage)
 
-	// get hmac of original message
-	hmacOriginal := m.GetPlainMessageMac()
-	log.Println("hmacOriginal", hmacOriginal)
+	// get criptic message
+	crypticmessage = m.GetEncodedEncriptedMessage()
+	log.Println("crypticmessage", crypticmessage)
 
-	// get encripted message
-	encriptedMessage := m.GetEncriptedMessage()
-	log.Println("encriptedMessage", encriptedMessage)
+	// get Authentication Code of this message
+	mac = m.GetPlainMessageMac()
+	log.Println("hmac of plaintext", mac)
 
-	// get encoded encripted message
-	encodedEncriptedMessage := m.GetEncodedEncriptedMessage()
-	log.Println("encodedEncriptedMessage", string(encodedEncriptedMessage))
-
-	// set encripted message for decription
-	m.SetEncriptedMessage(encriptedMessage)
-
-	// get decripted message
-	decreiptedMessage := m.GetDecriptedMessage()
-	log.Println(decreiptedMessage, string(decreiptedMessage))
-
-	if string(decreiptedMessage) != originalMessage {
-		t.Errorf("got: %v\nwant: %v", string(decreiptedMessage), originalMessage)
-	}
-
-	// get decripted message mac
-	hmacDecripted := m.GetDecriptedMessageMac()
-	log.Println("hmacDecripted", hmacDecripted)
-
-	// confirm hmac
-	equal, err := m.ConfirmMacFromstring(hmacOriginal)
-	if err != nil {
-		log.Println(err)
-	}
-	if !equal {
-		t.Errorf("original Mac: %v\nDecripted Mac: %v", hmacOriginal, hmacDecripted)
-	}
-
-	// set encoded encripted message
-	m.SetEncodedEncriptedMessage(encodedEncriptedMessage)
-	decreiptedMessage = m.GetDecriptedMessage()
-	log.Println(decreiptedMessage, string(decreiptedMessage))
-
-	if string(decreiptedMessage) != originalMessage {
-		t.Errorf("got: %v\nwant: %v", string(decreiptedMessage), originalMessage)
-	}
-
+	return
 }
+
+func decodeAndDecript(crypticmessage string, mac string) {
+
+	// new AESCTR
+	m := new(message.AESCTR)
+
+	// set key
+	m.SetKey([]byte("01234567890123456789012345678901"))
+
+	// set criptic message string
+	m.SetEncodedEncriptedMessage(crypticmessage)
+
+	// get original message from cryptic message
+	decreiptedMessage := m.GetDecriptedMessage()
+	log.Println("decreiptedMessage", string(decreiptedMessage))
+
+	// confirm Authentication Code
+	result, _ := m.ConfirmMacFromstring(mac)
+	log.Println("Confrimation result is", result)
+}
+
+func main(){
+	crypticmessage, mac := encriptAndEncode([]byte(originalMessage))
+	decodeAndDecript(crypticmessage, mac)
+}
+```
+
+Output message:   
+
+```
+crypticmessage L0z3LU3pmWNUvGr-w1eSzRLZpcuajcjy84Qa4Zq1
+hmac of plaintext cdd1aba74001d40e980de7cee69dc10d8495a609936bc835da4b30cb33ab6f50
+decreiptedMessage some plaintext
+Confrimation result is true
 ```
 
 ## supported algorithm
