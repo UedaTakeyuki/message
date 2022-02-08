@@ -7,7 +7,7 @@ An out-of-the-box cryptographic message communication.
 ### 1. encript & decript
 ```
 import(
-	  "github.com/UedaTakeyuki/message"
+	"github.com/UedaTakeyuki/message"
 )
 
 func encriptAndEncode(plainmessage []byte) (crypticmessage string) {
