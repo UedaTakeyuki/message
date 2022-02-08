@@ -2,7 +2,7 @@
 
 An out-of-the-box cryptographic message communication.
 
-# example
+## example
 
 func Test_AESCTR(t *testing.T) {
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds | log.Lshortfile)
@@ -65,6 +65,6 @@ func Test_AESCTR(t *testing.T) {
 
 }
 
-# supported encription algorithm
+## supported algorithm
 - [x] AES CTR + HMAC (encription: AES CTR, message authentication: HMAC)
 - [ ] AESGCM (both encription and message authentication are supported by AES GCM)
