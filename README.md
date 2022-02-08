@@ -2,7 +2,10 @@
 
 An out-of-the-box cryptographic message communication.
 
-## example
+## how to use
+import(
+  "github.com/UedaTakeyuki/message"
+)
 
 func Test_AESCTR(t *testing.T) {
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds | log.Lshortfile)
