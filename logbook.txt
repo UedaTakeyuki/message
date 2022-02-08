@@ -1,2 +1,2 @@
 2022.02.07 created by refering a secret project "gc_license"
-2022.02.08 add unit test
+2022.02.08 add unit test, add gcm

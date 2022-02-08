@@ -122,4 +122,4 @@ Confrimation result is true
 
 ## supported algorithm
 - [x] AES CTR + HMAC (encription: AES CTR, message authentication: HMAC)
-- [ ] AESGCM (both encription and message authentication are supported by AES GCM)
+- [x] AESGCM (both encription and message authentication are supported by AES GCM)
