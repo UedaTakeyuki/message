@@ -1,2 +1,4 @@
 2022.02.07 created by refering a secret project "gc_license"
 2022.02.08 add unit test, add gcm
+
+2022.07.11 hide debug message

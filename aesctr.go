@@ -42,7 +42,7 @@ func (m *AESCTR) SetNewIV() {
 	if err != nil {
 		log.Println(err)
 	} else {
-		log.Println("SetNewIV", m.iv)
+		//		log.Println("SetNewIV", m.iv)
 	}
 }
 
@@ -98,7 +98,7 @@ func (m *AESCTR) GetPlainMessageMac() (mac string) {
 }
 
 func (m *AESCTR) GetEncriptedMessage() (t []byte) {
-	log.Println("GetEncriptedMessage", m.iv, m.transformedmessage)
+	//	log.Println("GetEncriptedMessage", m.iv, m.transformedmessage)
 	t = append(m.iv, m.transformedmessage...)
 	return
 }

@@ -37,7 +37,7 @@ func (m *AESGCM) SetNewIV() {
 	if err != nil {
 		log.Println(err)
 	} else {
-		log.Println("SetNewIV", m.iv)
+		//		log.Println("SetNewIV", m.iv)
 	}
 }
 
