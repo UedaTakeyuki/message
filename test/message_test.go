@@ -1,13 +1,17 @@
 package message
 
 import (
-	"local.packages/message"
 	"log"
 	"testing"
+
+	cp "github.com/UedaTakeyuki/compare"
+	"local.packages/message"
 	//	"github.com/UedaTakeyuki/message"
 )
 
 const originalMessage = "some plaintext"
+
+var key_256 = []byte("01234567890123456789012345678901")
 
 func encriptAndEncode(plainmessage []byte) (crypticmessage string, mac string) {
 
@@ -15,7 +19,7 @@ func encriptAndEncode(plainmessage []byte) (crypticmessage string, mac string) {
 	m := new(message.AESCTR)
 
 	// set key
-	m.SetKey([]byte("01234567890123456789012345678901"))
+	m.SetKey(key_256)
 
 	// set plainmessage for encription
 	m.SetPlainMessage(plainmessage)
@@ -37,7 +41,7 @@ func decodeAndDecript(crypticmessage string, mac string) {
 	m := new(message.AESCTR)
 
 	// set key
-	m.SetKey([]byte("01234567890123456789012345678901"))
+	m.SetKey(key_256)
 
 	// set criptic message string
 	m.SetEncodedEncriptedMessage(crypticmessage)
@@ -60,7 +64,7 @@ func Test_AESCTR(t *testing.T) {
 	m := new(message.AESCTR)
 
 	// set key
-	m.SetKey([]byte("01234567890123456789012345678901"))
+	m.SetKey(key_256)
 
 	// set plainmessage for encription
 	m.SetPlainMessage([]byte(originalMessage))
@@ -82,11 +86,9 @@ func Test_AESCTR(t *testing.T) {
 
 	// get decripted message
 	decreiptedMessage := m.GetDecriptedMessage()
-	log.Println(decreiptedMessage, string(decreiptedMessage))
+	//log.Println(decreiptedMessage, string(decreiptedMessage))
 
-	if string(decreiptedMessage) != originalMessage {
-		t.Errorf("got: %v\nwant: %v", string(decreiptedMessage), originalMessage)
-	}
+	cp.Compare(t, string(decreiptedMessage), originalMessage)
 
 	// get decripted message mac
 	hmacDecripted := m.GetDecriptedMessageMac()
@@ -94,28 +96,22 @@ func Test_AESCTR(t *testing.T) {
 
 	// confirm hmac
 	equal, err := m.ConfirmMacFromstring(hmacOriginal)
-	if err != nil {
-		log.Println(err)
-	}
-	if !equal {
-		t.Errorf("original Mac: %v\nDecripted Mac: %v", hmacOriginal, hmacDecripted)
-	}
+	cp.Compare(t, err, nil)
+	cp.Compare(t, equal, true)
 
 	// set encoded encripted message
 	m.SetEncodedEncriptedMessage(encodedEncriptedMessage)
 	decreiptedMessage = m.GetDecriptedMessage()
-	log.Println(decreiptedMessage, string(decreiptedMessage))
+	//log.Println(decreiptedMessage, string(decreiptedMessage))
 
-	if string(decreiptedMessage) != originalMessage {
-		t.Errorf("got: %v\nwant: %v", string(decreiptedMessage), originalMessage)
-	}
+	cp.Compare(t, string(decreiptedMessage), originalMessage)
 
 	crypticmessage, mac := encriptAndEncode([]byte(originalMessage))
 	decodeAndDecript(crypticmessage, mac)
 }
 
 func Test_AESGCM(t *testing.T) {
-	log.SetFlags(log.LstdFlags | log.Lmicroseconds | log.Lshortfile)
+	//	log.SetFlags(log.LstdFlags | log.Lmicroseconds | log.Lshortfile)
 
 	aad := []byte("Some AAD data")
 
@@ -125,7 +121,7 @@ func Test_AESGCM(t *testing.T) {
 	m := new(message.AESGCM)
 
 	// set key
-	m.SetKey([]byte("01234567890123456789012345678901"))
+	m.SetKey(key_256)
 
 	// set plainmessage for encription
 	m.SetPlainMessage([]byte(originalMessage), aad)
@@ -146,14 +142,14 @@ func Test_AESGCM(t *testing.T) {
 	m = new(message.AESGCM)
 
 	// set key
-	m.SetKey([]byte("01234567890123456789012345678901"))
+	m.SetKey(key_256)
 
 	// set encripted message for decription
 	m.SetEncriptedMessage(encriptedMessage, aad)
 
 	// get decripted message
 	decreiptedMessage := m.GetDecriptedMessage()
-	log.Println(decreiptedMessage, string(decreiptedMessage))
+	//log.Println(decreiptedMessage, string(decreiptedMessage))
 
 	if string(decreiptedMessage) != originalMessage {
 		t.Errorf("got: %v\nwant: %v", string(decreiptedMessage), originalMessage)
@@ -178,14 +174,12 @@ func Test_AESGCM(t *testing.T) {
 	m = new(message.AESGCM)
 
 	// set key
-	m.SetKey([]byte("01234567890123456789012345678901"))
+	m.SetKey(key_256)
 
 	// set encoded encripted message
 	m.SetEncodedEncriptedMessage(encodedEncriptedMessage, aad)
 	decreiptedMessage = m.GetDecriptedMessage()
-	log.Println(decreiptedMessage, string(decreiptedMessage))
+	//log.Println(decreiptedMessage, string(decreiptedMessage))
 
-	if string(decreiptedMessage) != originalMessage {
-		t.Errorf("got: %v\nwant: %v", string(decreiptedMessage), originalMessage)
-	}
+	cp.Compare(t, string(decreiptedMessage), originalMessage)
 }
