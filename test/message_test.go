@@ -12,48 +12,8 @@ import (
 const originalMessage = "some plaintext"
 
 var key_256 = []byte("01234567890123456789012345678901")
-
-func encriptAndEncode(plainmessage []byte) (crypticmessage string, mac string) {
-
-	// new AESCTR
-	m := new(message.AESCTR)
-
-	// set key
-	m.SetKey(key_256)
-
-	// set plainmessage for encription
-	m.SetPlainMessage(plainmessage)
-
-	// get criptic message
-	crypticmessage = m.GetEncodedEncriptedMessage()
-	log.Println("crypticmessage:", crypticmessage)
-
-	// get Authentication Code of this message
-	mac = m.GetPlainMessageMac()
-	log.Println("hmac of plaintext:", mac)
-
-	return
-}
-
-func decodeAndDecript(crypticmessage string, mac string) {
-
-	// new AESCTR
-	m := new(message.AESCTR)
-
-	// set key
-	m.SetKey(key_256)
-
-	// set criptic message string
-	m.SetEncodedEncriptedMessage(crypticmessage)
-
-	// get original message from cryptic message
-	decreiptedMessage := m.GetDecriptedMessage()
-	log.Println("decreiptedMessage:", string(decreiptedMessage))
-
-	// confirm Authentication Code
-	result, _ := m.ConfirmMacFromstring(mac)
-	log.Println("Confrimation result is", result)
-}
+var key_192 = []byte("012345678901234567890123")
+var key_128 = []byte("0123456789012345")
 
 func Test_AESCTR(t *testing.T) {
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds | log.Lshortfile)
@@ -64,7 +24,8 @@ func Test_AESCTR(t *testing.T) {
 	m := new(message.AESCTR)
 
 	// set key
-	m.SetKey(key_256)
+	//	m.SetKey(key_256)
+	m.SetKey(key_192)
 
 	// set plainmessage for encription
 	m.SetPlainMessage([]byte(originalMessage))
@@ -106,8 +67,17 @@ func Test_AESCTR(t *testing.T) {
 
 	cp.Compare(t, string(decreiptedMessage), originalMessage)
 
-	crypticmessage, mac := encriptAndEncode([]byte(originalMessage))
-	decodeAndDecript(crypticmessage, mac)
+	// key length 256 bit
+	crypticmessage, mac := encriptEncode(t, []byte(originalMessage), key_256)
+	decodeDecriptAuth(t, crypticmessage, key_256, mac, originalMessage)
+
+	// key length 192 bit
+	crypticmessage, mac = encriptEncode(t, []byte(originalMessage), key_192)
+	decodeDecriptAuth(t, crypticmessage, key_192, mac, originalMessage)
+
+	// key length 128 bit
+	crypticmessage, mac = encriptEncode(t, []byte(originalMessage), key_128)
+	decodeDecriptAuth(t, crypticmessage, key_128, mac, originalMessage)
 }
 
 func Test_AESGCM(t *testing.T) {
@@ -121,7 +91,8 @@ func Test_AESGCM(t *testing.T) {
 	m := new(message.AESGCM)
 
 	// set key
-	m.SetKey(key_256)
+	//	m.SetKey(key_256)
+	m.SetKey(key_192)
 
 	// set plainmessage for encription
 	m.SetPlainMessage([]byte(originalMessage), aad)
@@ -142,7 +113,8 @@ func Test_AESGCM(t *testing.T) {
 	m = new(message.AESGCM)
 
 	// set key
-	m.SetKey(key_256)
+	//	m.SetKey(key_256)
+	m.SetKey(key_192)
 
 	// set encripted message for decription
 	m.SetEncriptedMessage(encriptedMessage, aad)
@@ -174,7 +146,8 @@ func Test_AESGCM(t *testing.T) {
 	m = new(message.AESGCM)
 
 	// set key
-	m.SetKey(key_256)
+	//	m.SetKey(key_256)
+	m.SetKey(key_192)
 
 	// set encoded encripted message
 	m.SetEncodedEncriptedMessage(encodedEncriptedMessage, aad)
