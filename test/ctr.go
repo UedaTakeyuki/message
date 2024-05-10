@@ -7,6 +7,13 @@ import (
 	"local.packages/message"
 )
 
+///////////////////////
+//
+// Create AESCTR
+//
+///////////////////////
+
+// Create AESCTR for Encript
 func createAESCTRforEncript(key []byte, plainmessage []byte) (m *message.AESCTR, err error) {
 	// new AESCTR
 	m = new(message.AESCTR)
@@ -23,6 +30,25 @@ func createAESCTRforEncript(key []byte, plainmessage []byte) (m *message.AESCTR,
 
 	return
 }
+
+// Create AESCTR for Decript
+func createAESCTRforDecript(key []byte) (m *message.AESCTR, err error) {
+	// new AESCTR
+	m = new(message.AESCTR)
+
+	// set key
+	if err = m.SetKey(key); err != nil {
+		return
+	}
+
+	return
+}
+
+///////////////////////
+//
+// Encript by AESCTR
+//
+///////////////////////
 
 func encriptByteArrayByAESCTR(key []byte, plainmessage []byte) (crypticmessage []byte, mac []byte, err error) {
 	// new AESCTR
@@ -56,28 +82,95 @@ func encriptStringByAESCTR(key []byte, plainmessage string) (crypticmessage stri
 	return
 }
 
-func decriptByAESCTRtoByteArray() {}
+///////////////////////
+//
+// Decript by AESCTR
+//
+///////////////////////
+
+///////////////////////
+// ByteArray
+///////////////////////
+
+// core
+func decriptByteArrayByAESCTRcore(key []byte, crypticmessage []byte) (decriptedmessage []byte, m *message.AESCTR, err error) {
+	// new AESCTR
+	if m, err = createAESCTRforDecript(key); err != nil {
+		return
+	}
+	// set criptic message byteArray
+	if err = m.SetEncriptedMessage(crypticmessage); err != nil {
+		return
+	}
+
+	decriptedmessage = m.GetDecriptedMessage()
+
+	return
+}
+
+// decript
+func decriptByteArrayByAESCTR(key []byte, crypticmessage []byte) (decriptedmessage []byte, err error) {
+	decriptedmessage, _, err = decriptByteArrayByAESCTRcore(key, crypticmessage)
+
+	return
+}
+
+// decript and auth
+func decriptByteArrayByAESCTRwithAuth(key []byte, crypticmessage []byte, originalmac []byte) (decriptedmessage []byte, authresult bool, err error) {
+	var m *message.AESCTR
+	if decriptedmessage, m, err = decriptByteArrayByAESCTRcore(key, crypticmessage); err != nil {
+		return
+	}
+	authresult, err = m.ConfirmMacFromByteArray(originalmac)
+	return
+}
+
+///////////////////////
+// String
+///////////////////////
+
+// core
+func decriptStringByAESCTRcore(key []byte, crypticmessage string) (decriptedmessage string, m *message.AESCTR, err error) {
+	// new AESCTR
+	if m, err = createAESCTRforDecript(key); err != nil {
+		return
+	}
+	// set criptic message byteArray
+	if err = m.SetEncodedEncriptedMessage(crypticmessage); err != nil {
+		return
+	}
+
+	decriptedmessage = string(m.GetDecriptedMessage())
+
+	return
+}
+
+// decript
+func decriptStringByAESCTR(key []byte, crypticmessage string) (decriptedmessage string, err error) {
+	decriptedmessage, _, err = decriptStringByAESCTRcore(key, crypticmessage)
+
+	return
+}
+
+// decript and auth
+func decriptStringByAESCTRwithAuth(key []byte, crypticmessage string, originalmac string) (decriptedmessage string, authresult bool, err error) {
+	var m *message.AESCTR
+	if decriptedmessage, m, err = decriptStringByAESCTRcore(key, crypticmessage); err != nil {
+		return
+	}
+	authresult, err = m.ConfirmMacFromString(originalmac)
+	return
+}
 
 func decriptAuthConfByAESCTR() {}
 
-func decodeDecriptAuth(t *testing.T, crypticmessage string, key []byte, mac string, originalmessage string) {
-
-	// new AESCTR
-	m := new(message.AESCTR)
-
-	// set key
-	//	m.SetKey(key_256)
-	m.SetKey(key)
-
-	// set criptic message string
-	m.SetEncodedEncriptedMessage(crypticmessage)
+func decodeDecriptAuth(t *testing.T, crypticmessage string, key []byte, mac string, originalmessage string) (err error) {
 
 	// get original message from cryptic message
-	decreiptedMessage := m.GetDecriptedMessage()
-	cp.Compare(t, string(decreiptedMessage), originalmessage)
-
-	// confirm Authentication Code
-	result, err := m.ConfirmMacFromstring(mac)
+	decreiptedMessage, authresult, err := decriptStringByAESCTRwithAuth(key, crypticmessage, mac)
+	cp.Compare(t, decreiptedMessage, string(originalmessage))
 	cp.Compare(t, err, nil)
-	cp.Compare(t, result, true)
+	cp.Compare(t, authresult, true)
+
+	return
 }

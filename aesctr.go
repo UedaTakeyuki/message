@@ -23,6 +23,10 @@ type AESCTR struct {
 	aesctr             cipher.Stream
 }
 
+///////////////////////
+// Set key & iv
+///////////////////////
+
 // Set encription key. This key is also used by AES CTR and hash function SHA-246 for HMAC
 func (m *AESCTR) SetKey(key []byte) (err error) {
 	l := len(key)
@@ -42,6 +46,10 @@ func (m *AESCTR) SetNewIV() (err error) {
 
 	return
 }
+
+///////////////////////
+// Set plain message
+///////////////////////
 
 // Set plain message to encript, get IV, and encript.
 func (m *AESCTR) SetPlainMessage(plainmessage []byte) (err error) {
@@ -74,6 +82,10 @@ func (m *AESCTR) SetPlainMessage(plainmessage []byte) (err error) {
 	return
 }
 
+///////////////////////
+// Get hmac of plain message
+///////////////////////
+
 func (m *AESCTR) GetPlainMessageMacAsByteArray() (mac []byte, err error) {
 	if m.key == nil {
 		err = errors.New("set key first.")
@@ -95,6 +107,10 @@ func (m *AESCTR) GetPlainMessageMac() (mac string, err error) {
 	return
 }
 
+///////////////////////
+// Get enclipted message
+///////////////////////
+
 func (m *AESCTR) GetEncriptedMessage() (t []byte) {
 	//	log.Println("GetEncriptedMessage", m.iv, m.transformedmessage)
 	t = append(m.iv, m.transformedmessage...)
@@ -105,6 +121,10 @@ func (m *AESCTR) GetEncodedEncriptedMessage() (t string) {
 	t = base64.URLEncoding.EncodeToString(m.GetEncriptedMessage())
 	return
 }
+
+///////////////////////
+// Set enclipted message
+///////////////////////
 
 func (m *AESCTR) SetEncriptedMessage(t []byte) (err error) {
 	if m.key == nil {
@@ -132,10 +152,18 @@ func (m *AESCTR) SetEncodedEncriptedMessage(t string) (err error) {
 	return
 }
 
+///////////////////////
+// Get decripted message
+///////////////////////
+
 func (m *AESCTR) GetDecriptedMessage() (t []byte) {
 	t = m.transformedmessage
 	return
 }
+
+///////////////////////
+// Get hmac of decripted message
+///////////////////////
 
 func (m *AESCTR) GetDecriptedMessageMacAsByteArray() (mac []byte, err error) {
 	if m.key == nil {
@@ -163,6 +191,10 @@ func (m *AESCTR) GetDecriptedMessageMac() (mac string, err error) {
 	return
 }
 
+///////////////////////
+// Confirm hmac
+///////////////////////
+
 // https://xn--go-hh0g6u.com/pkg/crypto/hmac/#Equal
 func (m *AESCTR) ConfirmMacFromByteArray(originalMac []byte) (result bool, err error) {
 	var mac_byteArray []byte
@@ -173,7 +205,7 @@ func (m *AESCTR) ConfirmMacFromByteArray(originalMac []byte) (result bool, err e
 	return
 }
 
-func (m *AESCTR) ConfirmMacFromstring(originalMac string) (result bool, err error) {
+func (m *AESCTR) ConfirmMacFromString(originalMac string) (result bool, err error) {
 	mac2, err := hex.DecodeString(originalMac)
 	if err != nil {
 		return

@@ -63,7 +63,7 @@ func Test_AESCTR(t *testing.T) {
 
 	// confirm hmac
 	{
-		equal, err := m.ConfirmMacFromstring(hmacOriginal)
+		equal, err := m.ConfirmMacFromString(hmacOriginal)
 		cp.Compare(t, err, nil)
 		cp.Compare(t, equal, true)
 	}
