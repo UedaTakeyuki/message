@@ -8,48 +8,60 @@ import (
 	"local.packages/message"
 )
 
-func createAESCTRforEncript(key []byte, plainmessage []byte) (m *message.AESCTR) {
+func createAESCTRforEncript(key []byte, plainmessage []byte) (m *message.AESCTR, err error) {
 	// new AESCTR
 	m = new(message.AESCTR)
 
 	// set key
-	m.SetKey(key)
+	if err = m.SetKey(key); err != nil {
+		return
+	}
 
 	// set plainmessage for encription
-	m.SetPlainMessage(plainmessage)
+	if err = m.SetPlainMessage(plainmessage); err != nil {
+		return
+	}
 
 	return
 }
 
-func encriptByteArrayByAESCTR(key []byte, plainmessage []byte) (crypticmessage []byte, mac []byte) {
+func encriptByteArrayByAESCTR(key []byte, plainmessage []byte) (crypticmessage []byte, mac []byte, err error) {
 	// new AESCTR
-	m := createAESCTRforEncript(key, plainmessage)
+	var m *message.AESCTR
+	if m, err = createAESCTRforEncript(key, plainmessage); err != nil {
+		return
+	}
 
 	// get criptic message
 	crypticmessage = m.GetEncriptedMessage()
 
 	// get hmac for authentication
-	mac = m.GetPlainMessageMacAsByteArray()
+	mac, err = m.GetPlainMessageMacAsByteArray()
 
 	return
 }
 
-func encriptStringByAESCTR(key []byte, plainmessage string) (crypticmessage string, mac string) {
+func encriptStringByAESCTR(key []byte, plainmessage string) (crypticmessage string, mac string, err error) {
 	// new AESCTR
-	m := createAESCTRforEncript(key, []byte(plainmessage))
+	var m *message.AESCTR
+	if m, err = createAESCTRforEncript(key, []byte(plainmessage)); err != nil {
+		return
+	}
 
 	// get criptic message
 	crypticmessage = m.GetEncodedEncriptedMessage()
 
 	// get hmac for authentication
-	mac = m.GetPlainMessageMac()
+	mac, err = m.GetPlainMessageMac()
 
 	return
 }
 
-func encriptEncode(t *testing.T, plainmessage []byte, key []byte) (crypticmessage string, mac string) {
+func encriptEncode(t *testing.T, plainmessage []byte, key []byte) (crypticmessage string, mac string, err error) {
 
-	crypticmessage, mac = encriptStringByAESCTR(key, string(plainmessage))
+	if crypticmessage, mac, err = encriptStringByAESCTR(key, string(plainmessage)); err != nil {
+		return
+	}
 	log.Println("crypticmessage:", crypticmessage)
 	log.Println("hmac of plaintext:", mac)
 

@@ -18,8 +18,6 @@ var key_128 = []byte("0123456789012345")
 func Test_AESCTR(t *testing.T) {
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds | log.Lshortfile)
 
-	//	originalMessage := "some plaintext"
-
 	// new AESCTR
 	m := new(message.AESCTR)
 
@@ -31,8 +29,13 @@ func Test_AESCTR(t *testing.T) {
 	m.SetPlainMessage([]byte(originalMessage))
 
 	// get hmac of original message
-	hmacOriginal := m.GetPlainMessageMac()
-	log.Println("hmacOriginal", hmacOriginal)
+	var hmacOriginal string
+	{
+		hmacOriginal1, err := m.GetPlainMessageMac()
+		cp.Compare(t, err, nil)
+		log.Println("hmacOriginal", hmacOriginal1)
+		hmacOriginal = hmacOriginal1
+	}
 
 	// get encripted message
 	encriptedMessage := m.GetEncriptedMessage()
@@ -52,13 +55,18 @@ func Test_AESCTR(t *testing.T) {
 	cp.Compare(t, string(decreiptedMessage), originalMessage)
 
 	// get decripted message mac
-	hmacDecripted := m.GetDecriptedMessageMac()
-	log.Println("hmacDecripted", hmacDecripted)
+	{
+		hmacDecripted, err := m.GetDecriptedMessageMac()
+		cp.Compare(t, err, nil)
+		log.Println("hmacDecripted", hmacDecripted)
+	}
 
 	// confirm hmac
-	equal, err := m.ConfirmMacFromstring(hmacOriginal)
-	cp.Compare(t, err, nil)
-	cp.Compare(t, equal, true)
+	{
+		equal, err := m.ConfirmMacFromstring(hmacOriginal)
+		cp.Compare(t, err, nil)
+		cp.Compare(t, equal, true)
+	}
 
 	// set encoded encripted message
 	m.SetEncodedEncriptedMessage(encodedEncriptedMessage)
@@ -68,16 +76,25 @@ func Test_AESCTR(t *testing.T) {
 	cp.Compare(t, string(decreiptedMessage), originalMessage)
 
 	// key length 256 bit
-	crypticmessage, mac := encriptEncode(t, []byte(originalMessage), key_256)
-	decodeDecriptAuth(t, crypticmessage, key_256, mac, originalMessage)
+	{
+		crypticmessage, mac, err := encriptEncode(t, []byte(originalMessage), key_256)
+		cp.Compare(t, err, nil)
+		decodeDecriptAuth(t, crypticmessage, key_256, mac, originalMessage)
+	}
 
 	// key length 192 bit
-	crypticmessage, mac = encriptEncode(t, []byte(originalMessage), key_192)
-	decodeDecriptAuth(t, crypticmessage, key_192, mac, originalMessage)
+	{
+		crypticmessage, mac, err := encriptEncode(t, []byte(originalMessage), key_192)
+		cp.Compare(t, err, nil)
+		decodeDecriptAuth(t, crypticmessage, key_192, mac, originalMessage)
+	}
 
 	// key length 128 bit
-	crypticmessage, mac = encriptEncode(t, []byte(originalMessage), key_128)
-	decodeDecriptAuth(t, crypticmessage, key_128, mac, originalMessage)
+	{
+		crypticmessage, mac, err := encriptEncode(t, []byte(originalMessage), key_128)
+		cp.Compare(t, err, nil)
+		decodeDecriptAuth(t, crypticmessage, key_128, mac, originalMessage)
+	}
 }
 
 func Test_AESGCM(t *testing.T) {

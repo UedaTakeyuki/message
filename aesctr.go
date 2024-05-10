@@ -11,6 +11,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
+	"errors"
 	"log"
 )
 
@@ -23,75 +24,74 @@ type AESCTR struct {
 }
 
 // Set encription key. This key is also used by AES CTR and hash function SHA-246 for HMAC
-func (m *AESCTR) SetKey(key []byte) {
+func (m *AESCTR) SetKey(key []byte) (err error) {
 	l := len(key)
 	if l != 16 && l != 24 && l != 32 {
-		// refer https://xn--go-hh0g6u.com/pkg/crypto/aes/#NewCipher
-		log.Println("key length should be 16 or 24 or 32 byte")
+		err = errors.New("key length should be 16 or 24 or 32 byte")
+		return
 	}
 	m.key = key
+
+	return
 }
 
 // Get randombyte from /dev/urandom for IV
-func (m *AESCTR) SetNewIV() {
-	var err error
-	/* A 256 bit key */
+func (m *AESCTR) SetNewIV() (err error) {
+	// aes.BlockSize = 16, refer https://pkg.go.dev/crypto/aes#pkg-constants
 	m.iv, err = get_randombytes(aes.BlockSize)
-	if err != nil {
-		log.Println(err)
-	} else {
-		//		log.Println("SetNewIV", m.iv)
-	}
+
+	return
 }
 
 // Set plain message to encript, get IV, and encript.
-func (m *AESCTR) SetPlainMessage(plainmessage []byte) {
+func (m *AESCTR) SetPlainMessage(plainmessage []byte) (err error) {
 	if m.key == nil {
-		log.Println("set key first.")
+		errors.New(SET_KEY_FIRST)
+		return
 	}
 	m.plainmessage = plainmessage
 	m.transformedmessage = make([]byte, len(plainmessage))
 
-	block, err := aes.NewCipher(m.key)
+	var block cipher.Block
+	block, err = aes.NewCipher(m.key)
+
+	// return if err
 	if err != nil {
-		log.Println(err)
+		return
 	}
+
+	// set new IV if nil
 	if m.iv == nil {
 		m.SetNewIV()
 	}
-	if err != nil {
-		log.Println(err)
-	}
+
 	// https://xn--go-hh0g6u.com/pkg/crypto/cipher/#example_NewCTR
 	m.aesctr = cipher.NewCTR(block, m.iv) // 使いまわしはできない
-	if err != nil {
-		log.Println(err)
-	}
 
+	// set stream
 	m.aesctr.XORKeyStream(m.transformedmessage, m.plainmessage)
-	//	log.Println("SetPlainMessage", m.iv, m.plainmessage, m.transformedmessage)
+
+	return
 }
 
-func (m *AESCTR) GetPlainMessageMacAsByteArray() (mac []byte) {
+func (m *AESCTR) GetPlainMessageMacAsByteArray() (mac []byte, err error) {
 	if m.key == nil {
-		log.Println("set key first.")
+		err = errors.New("set key first.")
+		return
 	}
 	h := hmac.New(sha256.New, []byte(m.key))
 	h.Write([]byte(m.plainmessage))
 	mac = h.Sum(nil)
+
 	return
 }
 
-func (m *AESCTR) GetPlainMessageMac() (mac string) {
-	/*
-		if m.key == nil {
-			log.Println("set key first.")
-		}
-		h := hmac.New(sha256.New, []byte(m.key))
-		h.Write([]byte(m.plainmessage))
-		mac = hex.EncodeToString(h.Sum(nil))
-	*/
-	mac = hex.EncodeToString(m.GetPlainMessageMacAsByteArray())
+func (m *AESCTR) GetPlainMessageMac() (mac string, err error) {
+	var mac_byteArray []byte
+	if mac_byteArray, err = m.GetPlainMessageMacAsByteArray(); err != nil {
+		return
+	}
+	mac = hex.EncodeToString(mac_byteArray)
 	return
 }
 
@@ -106,24 +106,30 @@ func (m *AESCTR) GetEncodedEncriptedMessage() (t string) {
 	return
 }
 
-func (m *AESCTR) SetEncriptedMessage(t []byte) {
+func (m *AESCTR) SetEncriptedMessage(t []byte) (err error) {
 	if m.key == nil {
-		log.Println("set key first.")
+		errors.New("set key first.")
+		return
 	}
 	m.iv = t[:aes.BlockSize]
 	m.SetPlainMessage(t[aes.BlockSize:])
 	//	log.Println("SetEncriptedMessage", t, m.iv, m.plainmessage)
+
+	return
 }
 
-func (m *AESCTR) SetEncodedEncriptedMessage(t string) {
+func (m *AESCTR) SetEncodedEncriptedMessage(t string) (err error) {
 	if m.key == nil {
-		log.Println("set key first.")
+		errors.New("set key first.")
+		return
 	}
 	messageEncriptedDecoded, err := base64.URLEncoding.DecodeString(t)
 	if err != nil {
 		log.Println(err)
 	}
 	m.SetEncriptedMessage(messageEncriptedDecoded)
+
+	return
 }
 
 func (m *AESCTR) GetDecriptedMessage() (t []byte) {
@@ -131,9 +137,10 @@ func (m *AESCTR) GetDecriptedMessage() (t []byte) {
 	return
 }
 
-func (m *AESCTR) GetDecriptedMessageMacAsByteArray() (mac []byte) {
+func (m *AESCTR) GetDecriptedMessageMacAsByteArray() (mac []byte, err error) {
 	if m.key == nil {
-		log.Println("set key first.")
+		errors.New("set key first.")
+		return
 	}
 	h := hmac.New(sha256.New, []byte(m.key))
 	h.Write([]byte(m.transformedmessage))
@@ -141,20 +148,28 @@ func (m *AESCTR) GetDecriptedMessageMacAsByteArray() (mac []byte) {
 	return
 }
 
-func (m *AESCTR) GetDecriptedMessageMac() (mac string) {
+func (m *AESCTR) GetDecriptedMessageMac() (mac string, err error) {
 	/*	if m.key == nil {
 			log.Println("set key first.")
 		}
 		h := hmac.New(sha256.New, []byte(m.key))
 		h.Write([]byte(m.transformedmessage))
 		mac = hex.EncodeToString(h.Sum(nil))*/
-	mac = hex.EncodeToString(m.GetDecriptedMessageMacAsByteArray())
+	var mac_byteArray []byte
+	if mac_byteArray, err = m.GetDecriptedMessageMacAsByteArray(); err != nil {
+		return
+	}
+	mac = hex.EncodeToString(mac_byteArray)
 	return
 }
 
 // https://xn--go-hh0g6u.com/pkg/crypto/hmac/#Equal
-func (m *AESCTR) ConfirmMacFromByteArray(originalMac []byte) (result bool) {
-	result = hmac.Equal(m.GetDecriptedMessageMacAsByteArray(), originalMac)
+func (m *AESCTR) ConfirmMacFromByteArray(originalMac []byte) (result bool, err error) {
+	var mac_byteArray []byte
+	if mac_byteArray, err = m.GetDecriptedMessageMacAsByteArray(); err != nil {
+		return
+	}
+	result = hmac.Equal(mac_byteArray, originalMac)
 	return
 }
 
@@ -163,7 +178,11 @@ func (m *AESCTR) ConfirmMacFromstring(originalMac string) (result bool, err erro
 	if err != nil {
 		return
 	}
-	result = hmac.Equal(m.GetDecriptedMessageMacAsByteArray(), mac2)
+	var mac_byteArray []byte
+	if mac_byteArray, err = m.GetDecriptedMessageMacAsByteArray(); err != nil {
+		return
+	}
+	result = hmac.Equal(mac_byteArray, mac2)
 	return
 }
 
