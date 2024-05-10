@@ -77,21 +77,21 @@ func Test_AESCTR(t *testing.T) {
 
 	// key length 256 bit
 	{
-		crypticmessage, mac, err := encriptEncode(t, []byte(originalMessage), key_256)
+		crypticmessage, mac, err := encriptStringByAESCTR(key_256, originalMessage)
 		cp.Compare(t, err, nil)
 		decodeDecriptAuth(t, crypticmessage, key_256, mac, originalMessage)
 	}
 
 	// key length 192 bit
 	{
-		crypticmessage, mac, err := encriptEncode(t, []byte(originalMessage), key_192)
+		crypticmessage, mac, err := encriptStringByAESCTR(key_192, originalMessage)
 		cp.Compare(t, err, nil)
 		decodeDecriptAuth(t, crypticmessage, key_192, mac, originalMessage)
 	}
 
 	// key length 128 bit
 	{
-		crypticmessage, mac, err := encriptEncode(t, []byte(originalMessage), key_128)
+		crypticmessage, mac, err := encriptStringByAESCTR(key_128, originalMessage)
 		cp.Compare(t, err, nil)
 		decodeDecriptAuth(t, crypticmessage, key_128, mac, originalMessage)
 	}

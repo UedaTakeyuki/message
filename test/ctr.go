@@ -1,7 +1,6 @@
 package message
 
 import (
-	"log"
 	"testing"
 
 	cp "github.com/UedaTakeyuki/compare"
@@ -53,17 +52,6 @@ func encriptStringByAESCTR(key []byte, plainmessage string) (crypticmessage stri
 
 	// get hmac for authentication
 	mac, err = m.GetPlainMessageMac()
-
-	return
-}
-
-func encriptEncode(t *testing.T, plainmessage []byte, key []byte) (crypticmessage string, mac string, err error) {
-
-	if crypticmessage, mac, err = encriptStringByAESCTR(key, string(plainmessage)); err != nil {
-		return
-	}
-	log.Println("crypticmessage:", crypticmessage)
-	log.Println("hmac of plaintext:", mac)
 
 	return
 }
