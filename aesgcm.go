@@ -19,6 +19,10 @@ type AESGCM struct {
 	aesgcm             cipher.AEAD
 }
 
+///////////////////////
+// Set key & iv
+///////////////////////
+
 // Set encription key. This key is also used by AES CTR and hash function SHA-246 for HMAC
 func (m *AESGCM) SetKey(key []byte) {
 	l := len(key)
@@ -40,6 +44,10 @@ func (m *AESGCM) SetNewIV() {
 		//		log.Println("SetNewIV", m.iv)
 	}
 }
+
+///////////////////////
+// Set plain message
+///////////////////////
 
 // Set plain message to encript, get IV, and encript.
 func (m *AESGCM) SetPlainMessage(plainmessage []byte, aad []byte) {
@@ -67,22 +75,9 @@ func (m *AESGCM) SetPlainMessage(plainmessage []byte, aad []byte) {
 	//	m.transformedmessage = append(m.iv, m.transformedmessage...)
 }
 
-/*
-func (m *AESGCM) GetPlainMessageMacAsByteArray() (mac []byte) {
-	if m.key == nil {
-		log.Println("set key first.")
-	}
-	h := hmac.New(sha256.New, []byte(m.key))
-	h.Write([]byte(m.plainmessage))
-	mac = h.Sum(nil)
-	return
-}
-
-func (m *AESGCM) GetPlainMessageMac() (mac string) {
-	mac = hex.EncodeToString(m.GetPlainMessageMacAsByteArray())
-	return
-}
-*/
+///////////////////////
+// Get enclipted message
+///////////////////////
 
 func (m *AESGCM) GetEncriptedMessage() (t []byte) {
 	t = append(m.iv, m.transformedmessage...)
@@ -93,6 +88,10 @@ func (m *AESGCM) GetEncodedEncriptedMessage() (t string) {
 	t = base64.URLEncoding.EncodeToString(m.GetEncriptedMessage())
 	return
 }
+
+///////////////////////
+// Set enclipted message
+///////////////////////
 
 func (m *AESGCM) SetEncriptedMessage(t []byte, aad []byte) (err error) {
 	if m.key == nil {
@@ -132,39 +131,11 @@ func (m *AESGCM) SetEncodedEncriptedMessage(t string, aad []byte) (err error) {
 	return
 }
 
+///////////////////////
+// Get decripted message
+///////////////////////
+
 func (m *AESGCM) GetDecriptedMessage() (t []byte) {
 	t = m.plainmessage
 	return
 }
-
-/*
-func (m *AESGCM) GetDecriptedMessageMacAsByteArray() (mac []byte) {
-	if m.key == nil {
-		log.Println("set key first.")
-	}
-	h := hmac.New(sha256.New, []byte(m.key))
-	h.Write([]byte(m.transformedmessage))
-	mac = h.Sum(nil)
-	return
-}
-
-func (m *AESGCM) GetDecriptedMessageMac() (mac string) {
-	mac = hex.EncodeToString(m.GetDecriptedMessageMacAsByteArray())
-	return
-}
-
-// https://xn--go-hh0g6u.com/pkg/crypto/hmac/#Equal
-func (m *AESGCM) ConfirmMacFromByteArray(originalMac []byte) (result bool) {
-	result = hmac.Equal(m.GetDecriptedMessageMacAsByteArray(), originalMac)
-	return
-}
-
-func (m *AESGCM) ConfirmMacFromstring(originalMac string) (result bool, err error) {
-	mac2, err := hex.DecodeString(originalMac)
-	if err != nil {
-		return
-	}
-	result = hmac.Equal(m.GetDecriptedMessageMacAsByteArray(), mac2)
-	return
-}
-*/
