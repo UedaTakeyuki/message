@@ -8,15 +8,35 @@ import (
 	"local.packages/message"
 )
 
-func encriptByAESCTR(key []byte, plainmessage []byte) (crypticmessage string, mac string) {
+func createAESCTRforEncript(key []byte, plainmessage []byte) (m *message.AESCTR) {
 	// new AESCTR
-	m := new(message.AESCTR)
+	m = new(message.AESCTR)
 
 	// set key
 	m.SetKey(key)
 
 	// set plainmessage for encription
 	m.SetPlainMessage(plainmessage)
+
+	return
+}
+
+func encriptByteArrayByAESCTR(key []byte, plainmessage []byte) (crypticmessage []byte, mac []byte) {
+	// new AESCTR
+	m := createAESCTRforEncript(key, plainmessage)
+
+	// get criptic message
+	crypticmessage = m.GetEncriptedMessage()
+
+	// get hmac for authentication
+	mac = m.GetPlainMessageMacAsByteArray()
+
+	return
+}
+
+func encriptStringByAESCTR(key []byte, plainmessage string) (crypticmessage string, mac string) {
+	// new AESCTR
+	m := createAESCTRforEncript(key, []byte(plainmessage))
 
 	// get criptic message
 	crypticmessage = m.GetEncodedEncriptedMessage()
@@ -29,12 +49,16 @@ func encriptByAESCTR(key []byte, plainmessage []byte) (crypticmessage string, ma
 
 func encriptEncode(t *testing.T, plainmessage []byte, key []byte) (crypticmessage string, mac string) {
 
-	crypticmessage, mac = encriptByAESCTR(key, plainmessage)
+	crypticmessage, mac = encriptStringByAESCTR(key, string(plainmessage))
 	log.Println("crypticmessage:", crypticmessage)
 	log.Println("hmac of plaintext:", mac)
 
 	return
 }
+
+func decriptByAESCTRtoByteArray() {}
+
+func decriptAuthConfByAESCTR() {}
 
 func decodeDecriptAuth(t *testing.T, crypticmessage string, key []byte, mac string, originalmessage string) {
 
