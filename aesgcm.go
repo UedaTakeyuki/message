@@ -8,7 +8,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/base64"
-	"log"
+	"errors"
 )
 
 type AESGCM struct {
@@ -24,25 +24,22 @@ type AESGCM struct {
 ///////////////////////
 
 // Set encription key. This key is also used by AES CTR and hash function SHA-246 for HMAC
-func (m *AESGCM) SetKey(key []byte) {
+func (m *AESGCM) SetKey(key []byte) (err error) {
 	l := len(key)
 	if l != 16 && l != 24 && l != 32 {
 		// refer https://xn--go-hh0g6u.com/pkg/crypto/aes/#NewCipher
-		log.Println("key length should be 16 or 24 or 32 byte")
+		errors.New(SHOULBE_16_24_32)
+		return
 	}
 	m.key = key
+
+	return
 }
 
 // Get randombyte from /dev/urandom for IV
-func (m *AESGCM) SetNewIV() {
-	var err error
-	/* A 256 bit key */
+func (m *AESGCM) SetNewIV() (err error) {
 	m.iv, err = get_randombytes(12)
-	if err != nil {
-		log.Println(err)
-	} else {
-		//		log.Println("SetNewIV", m.iv)
-	}
+	return
 }
 
 ///////////////////////
@@ -50,29 +47,31 @@ func (m *AESGCM) SetNewIV() {
 ///////////////////////
 
 // Set plain message to encript, get IV, and encript.
-func (m *AESGCM) SetPlainMessage(plainmessage []byte, aad []byte) {
+func (m *AESGCM) SetPlainMessage(plainmessage []byte, aad []byte) (err error) {
 	if m.key == nil {
-		log.Println("set key first.")
+		errors.New(SET_KEY_FIRST)
+		return
 	}
 	m.plainmessage = plainmessage
 	//	m.transformedmessage = make([]byte, len(plainmessage))
 
 	block, err := aes.NewCipher(m.key)
 	if err != nil {
-		log.Println(err)
+		return
 	}
 	if m.iv == nil {
-		m.SetNewIV()
-	}
-	if err != nil {
-		log.Println(err)
+		if err = m.SetNewIV(); err != nil {
+			return
+		}
 	}
 	m.aesgcm, err = cipher.NewGCM(block)
 	if err != nil {
-		log.Println(err)
+		return
 	}
 	m.transformedmessage = m.aesgcm.Seal(nil, m.iv, m.plainmessage, aad)
 	//	m.transformedmessage = append(m.iv, m.transformedmessage...)
+
+	return
 }
 
 ///////////////////////
@@ -95,7 +94,8 @@ func (m *AESGCM) GetEncodedEncriptedMessage() (t string) {
 
 func (m *AESGCM) SetEncriptedMessage(t []byte, aad []byte) (err error) {
 	if m.key == nil {
-		log.Println("set key first.")
+		errors.New(SET_KEY_FIRST)
+		return
 	}
 	m.iv = t[:12]
 	m.transformedmessage = t[12:]
@@ -103,17 +103,16 @@ func (m *AESGCM) SetEncriptedMessage(t []byte, aad []byte) (err error) {
 
 	block, err := aes.NewCipher(m.key)
 	if err != nil {
-		log.Println(err)
+		return
 	}
 	if m.iv == nil {
-		m.SetNewIV()
-	}
-	if err != nil {
-		log.Println(err)
+		if err = m.SetNewIV(); err != nil {
+			return
+		}
 	}
 	m.aesgcm, err = cipher.NewGCM(block)
 	if err != nil {
-		log.Println(err)
+		return
 	}
 	m.plainmessage, err = m.aesgcm.Open(nil, m.iv, m.transformedmessage, aad)
 	return
@@ -121,11 +120,12 @@ func (m *AESGCM) SetEncriptedMessage(t []byte, aad []byte) (err error) {
 
 func (m *AESGCM) SetEncodedEncriptedMessage(t string, aad []byte) (err error) {
 	if m.key == nil {
-		log.Println("set key first.")
+		errors.New(SET_KEY_FIRST)
+		return
 	}
 	messageEncriptedDecoded, err := base64.URLEncoding.DecodeString(t)
 	if err != nil {
-		log.Println(err)
+		return
 	}
 	err = m.SetEncriptedMessage(messageEncriptedDecoded, aad)
 	return

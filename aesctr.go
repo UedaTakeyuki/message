@@ -31,7 +31,7 @@ type AESCTR struct {
 func (m *AESCTR) SetKey(key []byte) (err error) {
 	l := len(key)
 	if l != 16 && l != 24 && l != 32 {
-		err = errors.New("key length should be 16 or 24 or 32 byte")
+		err = errors.New(SHOULBE_16_24_32)
 		return
 	}
 	m.key = key
@@ -70,7 +70,9 @@ func (m *AESCTR) SetPlainMessage(plainmessage []byte) (err error) {
 
 	// set new IV if nil
 	if m.iv == nil {
-		m.SetNewIV()
+		if err = m.SetNewIV(); err != nil {
+			return
+		}
 	}
 
 	// https://xn--go-hh0g6u.com/pkg/crypto/cipher/#example_NewCTR
@@ -88,7 +90,7 @@ func (m *AESCTR) SetPlainMessage(plainmessage []byte) (err error) {
 
 func (m *AESCTR) GetPlainMessageMacAsByteArray() (mac []byte, err error) {
 	if m.key == nil {
-		err = errors.New("set key first.")
+		err = errors.New(SET_KEY_FIRST)
 		return
 	}
 	h := hmac.New(sha256.New, []byte(m.key))
@@ -128,7 +130,7 @@ func (m *AESCTR) GetEncodedEncriptedMessage() (t string) {
 
 func (m *AESCTR) SetEncriptedMessage(t []byte) (err error) {
 	if m.key == nil {
-		errors.New("set key first.")
+		errors.New(SET_KEY_FIRST)
 		return
 	}
 	m.iv = t[:aes.BlockSize]
@@ -140,7 +142,7 @@ func (m *AESCTR) SetEncriptedMessage(t []byte) (err error) {
 
 func (m *AESCTR) SetEncodedEncriptedMessage(t string) (err error) {
 	if m.key == nil {
-		errors.New("set key first.")
+		errors.New(SET_KEY_FIRST)
 		return
 	}
 	messageEncriptedDecoded, err := base64.URLEncoding.DecodeString(t)
@@ -167,7 +169,7 @@ func (m *AESCTR) GetDecriptedMessage() (t []byte) {
 
 func (m *AESCTR) GetDecriptedMessageMacAsByteArray() (mac []byte, err error) {
 	if m.key == nil {
-		errors.New("set key first.")
+		errors.New(SET_KEY_FIRST)
 		return
 	}
 	h := hmac.New(sha256.New, []byte(m.key))

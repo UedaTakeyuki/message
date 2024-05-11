@@ -164,7 +164,7 @@ func decriptStringByAESCTRwithAuth(key []byte, crypticmessage string, originalma
 
 func decriptAuthConfByAESCTR() {}
 
-func decodeDecriptAuth(t *testing.T, crypticmessage string, key []byte, mac string, originalmessage string) (err error) {
+func decodeDecriptAuthAESCTR(t *testing.T, crypticmessage string, key []byte, mac string, originalmessage string) (err error) {
 
 	// get original message from cryptic message
 	decreiptedMessage, authresult, err := decriptStringByAESCTRwithAuth(key, crypticmessage, mac)
