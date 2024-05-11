@@ -9,13 +9,17 @@ import (
 	//	"github.com/UedaTakeyuki/message"
 )
 
+//////////////
+// basic test
+//////////////
+
 const originalMessage = "some plaintext"
 
 var key_256 = []byte("01234567890123456789012345678901")
 var key_192 = []byte("012345678901234567890123")
 var key_128 = []byte("0123456789012345")
 
-func Test_AESCTR(t *testing.T) {
+func Test_AESCTR_01(t *testing.T) {
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds | log.Lshortfile)
 
 	// new AESCTR
@@ -97,7 +101,7 @@ func Test_AESCTR(t *testing.T) {
 	}
 }
 
-func Test_AESGCM(t *testing.T) {
+func Test_AESGCM_01(t *testing.T) {
 	//	log.SetFlags(log.LstdFlags | log.Lmicroseconds | log.Lshortfile)
 
 	aad := []byte("Some AAD data")
