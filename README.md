@@ -26,6 +26,7 @@ crypticmessage, mac, err := message.EncriptStringByAESCTR(key_256, originalMessa
 // decript 
 decriptedmessage, err2 := message.DecriptStringByAESCTR(key_256, crypticmessage)
 ```
+For more examples, refer [Test_02_test.go](test/Test_02_test.go)
 
 ### Direct use of AES classes
 #### 1. encript & decript
