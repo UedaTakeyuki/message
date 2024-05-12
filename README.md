@@ -26,7 +26,7 @@ crypticmessage, mac, err := message.EncriptStringByAESCTR(key_256, originalMessa
 // decript 
 decriptedmessage, err2 := message.DecriptStringByAESCTR(key_256, crypticmessage)
 ```
-For more examples, refer [Test_02_test.go](test/Test_02_test.go)
+For more examples, refer [Test_02_test.go](test/Test_02_test.go) and [Test_03_test.go](test/Test_03_test.go)
 
 ### Direct use of AES classes
 #### 1. encript & decript
@@ -144,6 +144,8 @@ hmac of plaintext: cdd1aba74001d40e980de7cee69dc10d8495a609936bc835da4b30cb33ab6
 decreiptedMessage: some plaintext
 Confrimation result is true
 ```
+
+For more examples, refer [Test_01_test.go](test/Test_01_test.go)
 
 ## supported algorithm
 - [x] AES CTR + HMAC (encription: AES CTR, message authentication: HMAC)
