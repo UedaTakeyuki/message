@@ -21,7 +21,7 @@ var key_128 = []byte("0123456789012345")
 
 var aad = []byte("Some AAD data")
 
-func Test_AESCTR_00(t *testing.T) {
+func Test_AESCTR_01(t *testing.T) {
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds | log.Lshortfile)
 
 	// new AESCTR
@@ -83,7 +83,7 @@ func Test_AESCTR_00(t *testing.T) {
 
 }
 
-func Test_AESGCM_00(t *testing.T) {
+func Test_AESGCM_01(t *testing.T) {
 	//	log.SetFlags(log.LstdFlags | log.Lmicroseconds | log.Lshortfile)
 
 	//aad := []byte("Some AAD data")

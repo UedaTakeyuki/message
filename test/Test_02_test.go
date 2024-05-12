@@ -12,7 +12,7 @@ import (
 // basic test
 //////////////
 
-func Test_AESCTR_01(t *testing.T) {
+func Test_AESCTR_02(t *testing.T) {
 	// key length 256 bit
 	{
 		crypticmessage, mac, err := message.EncriptStringByAESCTR(key_256, originalMessage)
@@ -35,24 +35,24 @@ func Test_AESCTR_01(t *testing.T) {
 	}
 }
 
-func Test_AESGCM_01(t *testing.T) {
+func Test_AESGCM_02(t *testing.T) {
 	// key length 256 bit
 	{
-		crypticmessage, err := encriptStringByAESGCM(key_256, originalMessage, aad)
+		crypticmessage, err := message.EncriptStringByAESGCM(key_256, originalMessage, aad)
 		cp.Compare(t, err, nil)
 		decodeDecriptAESGCM(t, crypticmessage, key_256, aad, originalMessage)
 	}
 
 	// key length 192 bit
 	{
-		crypticmessage, err := encriptStringByAESGCM(key_192, originalMessage, aad)
+		crypticmessage, err := message.EncriptStringByAESGCM(key_192, originalMessage, aad)
 		cp.Compare(t, err, nil)
 		decodeDecriptAESGCM(t, crypticmessage, key_192, aad, originalMessage)
 	}
 
 	// key length 128 bit
 	{
-		crypticmessage, err := encriptStringByAESGCM(key_128, originalMessage, aad)
+		crypticmessage, err := message.EncriptStringByAESGCM(key_128, originalMessage, aad)
 		cp.Compare(t, err, nil)
 		decodeDecriptAESGCM(t, crypticmessage, key_128, aad, originalMessage)
 	}

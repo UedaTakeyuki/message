@@ -19,7 +19,7 @@ import (
 //var key_192 = []byte("012345678901234567890123")
 //var key_128 = []byte("0123456789012345")
 
-func Test_AESCTR_02(t *testing.T) {
+func Test_AESCTR_03(t *testing.T) {
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds | log.Lshortfile)
 
 	// key length 256 bit
@@ -50,30 +50,30 @@ func Test_AESCTR_02(t *testing.T) {
 	}
 }
 
-func Test_AESGCM_02(t *testing.T) {
+func Test_AESGCM_03(t *testing.T) {
 	// key length 256 bit
 	{
-		crypticmessage, err1 := encriptStringByAESGCM(key_256, originalMessage, nil)
+		crypticmessage, err1 := message.EncriptStringByAESGCM(key_256, originalMessage, nil)
 		cp.Compare(t, err1, nil)
-		decriptedmessage, err2 := decriptStringByAESGCM(key_256, crypticmessage, nil)
+		decriptedmessage, err2 := message.DecriptStringByAESGCM(key_256, crypticmessage, nil)
 		cp.Compare(t, err2, nil)
 		cp.Compare(t, decriptedmessage, originalMessage)
 	}
 
 	// key length 192 bit
 	{
-		crypticmessage, err1 := encriptStringByAESGCM(key_192, originalMessage, nil)
+		crypticmessage, err1 := message.EncriptStringByAESGCM(key_192, originalMessage, nil)
 		cp.Compare(t, err1, nil)
-		decriptedmessage, err2 := decriptStringByAESGCM(key_192, crypticmessage, nil)
+		decriptedmessage, err2 := message.DecriptStringByAESGCM(key_192, crypticmessage, nil)
 		cp.Compare(t, err2, nil)
 		cp.Compare(t, decriptedmessage, originalMessage)
 	}
 
 	// key length 128 bit
 	{
-		crypticmessage, err1 := encriptStringByAESGCM(key_192, originalMessage, nil)
+		crypticmessage, err1 := message.EncriptStringByAESGCM(key_192, originalMessage, nil)
 		cp.Compare(t, err1, nil)
-		decriptedmessage, err2 := decriptStringByAESGCM(key_192, crypticmessage, nil)
+		decriptedmessage, err2 := message.DecriptStringByAESGCM(key_192, crypticmessage, nil)
 		cp.Compare(t, err2, nil)
 		cp.Compare(t, decriptedmessage, originalMessage)
 	}
