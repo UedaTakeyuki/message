@@ -9,43 +9,6 @@ import (
 
 ///////////////////////
 //
-// Create AESGCM
-//
-///////////////////////
-
-// Create AESGCM for Encript
-func createAESGCMforEncript(key []byte, plainmessage []byte, aad []byte) (m *message.AESGCM, err error) {
-	// new AESGCM
-	m = new(message.AESGCM)
-
-	// set key
-	if err = m.SetKey(key); err != nil {
-		return
-	}
-
-	// set plainmessage for encription
-	if err = m.SetPlainMessage(plainmessage, aad); err != nil {
-		return
-	}
-
-	return
-}
-
-// Create AESGCM for Decript
-func createAESGCMforDecript(key []byte) (m *message.AESGCM, err error) {
-	// new AESGCM
-	m = new(message.AESGCM)
-
-	// set key
-	if err = m.SetKey(key); err != nil {
-		return
-	}
-
-	return
-}
-
-///////////////////////
-//
 // Encript by AESGCM
 //
 ///////////////////////
@@ -53,7 +16,7 @@ func createAESGCMforDecript(key []byte) (m *message.AESGCM, err error) {
 func encriptByteArrayByAESGCM(key []byte, plainmessage []byte, aad []byte) (crypticmessage []byte, err error) {
 	// new AESGCM
 	var m *message.AESGCM
-	if m, err = createAESGCMforEncript(key, plainmessage, aad); err != nil {
+	if m, err = message.CreateAESGCMforEncript(key, plainmessage, aad); err != nil {
 		return
 	}
 
@@ -66,7 +29,7 @@ func encriptByteArrayByAESGCM(key []byte, plainmessage []byte, aad []byte) (cryp
 func encriptStringByAESGCM(key []byte, plainmessage string, aad []byte) (crypticmessage string, err error) {
 	// new AESGCM
 	var m *message.AESGCM
-	if m, err = createAESGCMforEncript(key, []byte(plainmessage), aad); err != nil {
+	if m, err = message.CreateAESGCMforEncript(key, []byte(plainmessage), aad); err != nil {
 		return
 	}
 
@@ -89,7 +52,7 @@ func encriptStringByAESGCM(key []byte, plainmessage string, aad []byte) (cryptic
 // core
 func decriptByteArrayByAESGCMcore(key []byte, crypticmessage []byte, aad []byte) (decriptedmessage []byte, m *message.AESGCM, err error) {
 	// new AESGCM
-	if m, err = createAESGCMforDecript(key); err != nil {
+	if m, err = message.CreateAESGCMforDecript(key); err != nil {
 		return
 	}
 	// set criptic message byteArray
@@ -116,7 +79,7 @@ func decriptByteArrayByAESGCM(key []byte, crypticmessage []byte, aad []byte) (de
 // core
 func decriptStringByAESGCMcore(key []byte, crypticmessage string, aad []byte) (decriptedmessage string, m *message.AESGCM, err error) {
 	// new AESGCM
-	if m, err = createAESGCMforDecript(key); err != nil {
+	if m, err = message.CreateAESGCMforDecript(key); err != nil {
 		return
 	}
 	// set criptic message byteArray

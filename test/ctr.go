@@ -14,6 +14,7 @@ import (
 ///////////////////////
 
 // Create AESCTR for Encript
+/*
 func createAESCTRforEncript(key []byte, plainmessage []byte) (m *message.AESCTR, err error) {
 	// new AESCTR
 	m = new(message.AESCTR)
@@ -43,7 +44,7 @@ func createAESCTRforDecript(key []byte) (m *message.AESCTR, err error) {
 
 	return
 }
-
+*/
 ///////////////////////
 //
 // Encript by AESCTR
@@ -53,7 +54,7 @@ func createAESCTRforDecript(key []byte) (m *message.AESCTR, err error) {
 func encriptByteArrayByAESCTR(key []byte, plainmessage []byte) (crypticmessage []byte, mac []byte, err error) {
 	// new AESCTR
 	var m *message.AESCTR
-	if m, err = createAESCTRforEncript(key, plainmessage); err != nil {
+	if m, err = message.CreateAESCTRforEncript(key, plainmessage); err != nil {
 		return
 	}
 
@@ -69,7 +70,7 @@ func encriptByteArrayByAESCTR(key []byte, plainmessage []byte) (crypticmessage [
 func encriptStringByAESCTR(key []byte, plainmessage string) (crypticmessage string, mac string, err error) {
 	// new AESCTR
 	var m *message.AESCTR
-	if m, err = createAESCTRforEncript(key, []byte(plainmessage)); err != nil {
+	if m, err = message.CreateAESCTRforEncript(key, []byte(plainmessage)); err != nil {
 		return
 	}
 
@@ -95,7 +96,7 @@ func encriptStringByAESCTR(key []byte, plainmessage string) (crypticmessage stri
 // core
 func decriptByteArrayByAESCTRcore(key []byte, crypticmessage []byte) (decriptedmessage []byte, m *message.AESCTR, err error) {
 	// new AESCTR
-	if m, err = createAESCTRforDecript(key); err != nil {
+	if m, err = message.CreateAESCTRforDecript(key); err != nil {
 		return
 	}
 	// set criptic message byteArray
@@ -132,7 +133,7 @@ func decriptByteArrayByAESCTRwithAuth(key []byte, crypticmessage []byte, origina
 // core
 func decriptStringByAESCTRcore(key []byte, crypticmessage string) (decriptedmessage string, m *message.AESCTR, err error) {
 	// new AESCTR
-	if m, err = createAESCTRforDecript(key); err != nil {
+	if m, err = message.CreateAESCTRforDecript(key); err != nil {
 		return
 	}
 	// set criptic message byteArray
