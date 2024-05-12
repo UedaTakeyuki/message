@@ -1,7 +1,6 @@
 package message
 
 import (
-	"log"
 	"testing"
 
 	cp "github.com/UedaTakeyuki/compare"
@@ -9,72 +8,52 @@ import (
 	//	"github.com/UedaTakeyuki/message"
 )
 
-/////////////////////
-// without mac & aad
-/////////////////////
+//////////////
+// basic test
+//////////////
 
-//const originalMessage = "some plaintext"
-
-//var key_256 = []byte("01234567890123456789012345678901")
-//var key_192 = []byte("012345678901234567890123")
-//var key_128 = []byte("0123456789012345")
-
-func Test_AESCTR_02(t *testing.T) {
-	log.SetFlags(log.LstdFlags | log.Lmicroseconds | log.Lshortfile)
-
+func Test_AESCTR_01(t *testing.T) {
 	// key length 256 bit
 	{
-		crypticmessage, _, err1 := message.EncriptStringByAESCTR(key_256, originalMessage)
-		cp.Compare(t, err1, nil)
-		decriptedmessage, err2 := message.DecriptStringByAESCTR(key_256, crypticmessage)
-		cp.Compare(t, err2, nil)
-		cp.Compare(t, decriptedmessage, originalMessage)
+		crypticmessage, mac, err := message.EncriptStringByAESCTR(key_256, originalMessage)
+		cp.Compare(t, err, nil)
+		decodeDecriptAuthAESCTR(t, crypticmessage, key_256, mac, originalMessage)
 	}
 
 	// key length 192 bit
 	{
-		crypticmessage, _, err1 := message.EncriptStringByAESCTR(key_192, originalMessage)
-		cp.Compare(t, err1, nil)
-		decriptedmessage, err2 := message.DecriptStringByAESCTR(key_192, crypticmessage)
-		cp.Compare(t, err2, nil)
-		cp.Compare(t, decriptedmessage, originalMessage)
+		crypticmessage, mac, err := message.EncriptStringByAESCTR(key_192, originalMessage)
+		cp.Compare(t, err, nil)
+		decodeDecriptAuthAESCTR(t, crypticmessage, key_192, mac, originalMessage)
 	}
 
 	// key length 128 bit
 	{
-		crypticmessage, _, err1 := message.EncriptStringByAESCTR(key_192, originalMessage)
-		cp.Compare(t, err1, nil)
-		decriptedmessage, err2 := message.DecriptStringByAESCTR(key_192, crypticmessage)
-		cp.Compare(t, err2, nil)
-		cp.Compare(t, decriptedmessage, originalMessage)
+		crypticmessage, mac, err := message.EncriptStringByAESCTR(key_128, originalMessage)
+		cp.Compare(t, err, nil)
+		decodeDecriptAuthAESCTR(t, crypticmessage, key_128, mac, originalMessage)
 	}
 }
 
-func Test_AESGCM_02(t *testing.T) {
+func Test_AESGCM_01(t *testing.T) {
 	// key length 256 bit
 	{
-		crypticmessage, err1 := encriptStringByAESGCM(key_256, originalMessage, nil)
-		cp.Compare(t, err1, nil)
-		decriptedmessage, err2 := decriptStringByAESGCM(key_256, crypticmessage, nil)
-		cp.Compare(t, err2, nil)
-		cp.Compare(t, decriptedmessage, originalMessage)
+		crypticmessage, err := encriptStringByAESGCM(key_256, originalMessage, aad)
+		cp.Compare(t, err, nil)
+		decodeDecriptAESGCM(t, crypticmessage, key_256, aad, originalMessage)
 	}
 
 	// key length 192 bit
 	{
-		crypticmessage, err1 := encriptStringByAESGCM(key_192, originalMessage, nil)
-		cp.Compare(t, err1, nil)
-		decriptedmessage, err2 := decriptStringByAESGCM(key_192, crypticmessage, nil)
-		cp.Compare(t, err2, nil)
-		cp.Compare(t, decriptedmessage, originalMessage)
+		crypticmessage, err := encriptStringByAESGCM(key_192, originalMessage, aad)
+		cp.Compare(t, err, nil)
+		decodeDecriptAESGCM(t, crypticmessage, key_192, aad, originalMessage)
 	}
 
 	// key length 128 bit
 	{
-		crypticmessage, err1 := encriptStringByAESGCM(key_192, originalMessage, nil)
-		cp.Compare(t, err1, nil)
-		decriptedmessage, err2 := decriptStringByAESGCM(key_192, crypticmessage, nil)
-		cp.Compare(t, err2, nil)
-		cp.Compare(t, decriptedmessage, originalMessage)
+		crypticmessage, err := encriptStringByAESGCM(key_128, originalMessage, aad)
+		cp.Compare(t, err, nil)
+		decodeDecriptAESGCM(t, crypticmessage, key_128, aad, originalMessage)
 	}
 }
