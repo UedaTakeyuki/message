@@ -4,7 +4,31 @@ An out-of-the-box cryptographic message communication.
 
 ## how to use
 
-### 1. encript & decript
+### Using high-level APIs
+```
+import(
+	"github.com/UedaTakeyuki/message"
+)
+// original message 
+const originalMessage = "some plaintext"
+
+// an aad for AESGCM
+var aad = []byte("Some AAD data")
+
+// keys
+var key_256 = []byte("01234567890123456789012345678901")
+var key_192 = []byte("012345678901234567890123")
+var key_128 = []byte("0123456789012345")
+
+// encript by AESCTR with 256 bit key
+crypticmessage, mac, err := message.EncriptStringByAESCTR(key_256, originalMessage)
+
+// decript 
+decriptedmessage, err2 := message.DecriptStringByAESCTR(key_256, crypticmessage)
+```
+
+### Direct use of AES classes
+#### 1. encript & decript
 ```
 import(
 	"github.com/UedaTakeyuki/message"
@@ -57,7 +81,7 @@ Output message:
 crypticmessage: L0z3LU3pmWNUvGr-w1eSzRLZpcuajcjy84Qa4Zq1
 decreiptedMessage: some plaintext
 ```
-### 2. encript and authenticate & decript and authentication confirm
+#### 2. encript and authenticate & decript and authentication confirm
 ```
 import(
 	  "github.com/UedaTakeyuki/message"
