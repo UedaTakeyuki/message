@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	cp "github.com/UedaTakeyuki/compare"
+	"local.packages/message"
 	//	"github.com/UedaTakeyuki/message"
 )
 
@@ -23,27 +24,27 @@ func Test_AESCTR_02(t *testing.T) {
 
 	// key length 256 bit
 	{
-		crypticmessage, _, err1 := encriptStringByAESCTR(key_256, originalMessage)
+		crypticmessage, _, err1 := message.EncriptStringByAESCTR(key_256, originalMessage)
 		cp.Compare(t, err1, nil)
-		decriptedmessage, err2 := decriptStringByAESCTR(key_256, crypticmessage)
+		decriptedmessage, err2 := message.DecriptStringByAESCTR(key_256, crypticmessage)
 		cp.Compare(t, err2, nil)
 		cp.Compare(t, decriptedmessage, originalMessage)
 	}
 
 	// key length 192 bit
 	{
-		crypticmessage, _, err1 := encriptStringByAESCTR(key_192, originalMessage)
+		crypticmessage, _, err1 := message.EncriptStringByAESCTR(key_192, originalMessage)
 		cp.Compare(t, err1, nil)
-		decriptedmessage, err2 := decriptStringByAESCTR(key_192, crypticmessage)
+		decriptedmessage, err2 := message.DecriptStringByAESCTR(key_192, crypticmessage)
 		cp.Compare(t, err2, nil)
 		cp.Compare(t, decriptedmessage, originalMessage)
 	}
 
 	// key length 128 bit
 	{
-		crypticmessage, _, err1 := encriptStringByAESCTR(key_192, originalMessage)
+		crypticmessage, _, err1 := message.EncriptStringByAESCTR(key_192, originalMessage)
 		cp.Compare(t, err1, nil)
-		decriptedmessage, err2 := decriptStringByAESCTR(key_192, crypticmessage)
+		decriptedmessage, err2 := message.DecriptStringByAESCTR(key_192, crypticmessage)
 		cp.Compare(t, err2, nil)
 		cp.Compare(t, decriptedmessage, originalMessage)
 	}
