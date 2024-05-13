@@ -147,6 +147,9 @@ Confrimation result is true
 
 For more examples, refer [Test_01_test.go](test/Test_01_test.go)
 
+## structure
+![](docs/class.jpg)
+
 ## supported algorithm
 - [x] AES CTR + HMAC (encription: AES CTR, message authentication: HMAC)
 - [x] AESGCM (both encription and message authentication are supported by AES GCM)
