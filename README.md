@@ -148,7 +148,11 @@ Confrimation result is true
 For more examples, refer [Test_01_test.go](test/Test_01_test.go)
 
 ## structure
-![](docs/class.jpg)
+### hight level API
+![](docs/global.png)
+
+### class interface
+![](docs/class.png)
 
 ## supported algorithm
 - [x] AES CTR + HMAC (encription: AES CTR, message authentication: HMAC)
