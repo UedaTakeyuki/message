@@ -10,6 +10,7 @@ namespace message {
                                <<EncriptStringByAESGCM(key []byte, plainmessage string, aad []byte) (crypticmessage string, err error)>> \
                                <<DecriptByteArrayByAESGCM(key []byte, crypticmessage []byte, aad []byte) (decriptedmessage []byte, err error)>> \
                                <<DecriptStringByAESGCM(key []byte, crypticmessage string, aad []byte) (decriptedmessage string, err error)>>
+    GlobalFuncsForAESCTR -[hidden]- GlobalFuncsForAESGCM
 }
 
 
