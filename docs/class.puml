@@ -1,0 +1,46 @@
+@startuml
+namespace message {
+    class AESCTR << (S,Aquamarine) >> {
+        - key []byte
+        - plainmessage []byte
+        - transformedmessage []byte
+        - iv []byte
+        - aesctr cipher.Stream
+
+        + SetKey(key []byte) error
+        + SetNewIV() error
+        + SetPlainMessage(plainmessage []byte) error
+        + GetPlainMessageMacAsByteArray() ([]byte, error)
+        + GetPlainMessageMac() (string, error)
+        + GetEncriptedMessage() []byte
+        + GetEncodedEncriptedMessage() string
+        + SetEncriptedMessage(t []byte) error
+        + SetEncodedEncriptedMessage(t string) error
+        + GetDecriptedMessage() []byte
+        + GetDecriptedMessageMacAsByteArray() ([]byte, error)
+        + GetDecriptedMessageMac() (string, error)
+        + ConfirmMacFromByteArray(originalMac []byte) (bool, error)
+        + ConfirmMacFromString(originalMac string) (bool, error)
+
+    }
+    class AESGCM << (S,Aquamarine) >> {
+        - key []byte
+        - plainmessage []byte
+        - transformedmessage []byte
+        - iv []byte
+        - aesgcm cipher.AEAD
+
+        + SetKey(key []byte) error
+        + SetNewIV() error
+        + SetPlainMessage(plainmessage []byte, aad []byte) error
+        + GetEncriptedMessage() []byte
+        + GetEncodedEncriptedMessage() string
+        + SetEncriptedMessage(t []byte, aad []byte) error
+        + SetEncodedEncriptedMessage(t string, aad []byte) error
+        + GetDecriptedMessage() []byte
+
+    }
+}
+
+
+@enduml
