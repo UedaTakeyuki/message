@@ -23,6 +23,12 @@ namespace message {
         + ConfirmMacFromString(originalMac string) (bool, error)
 
     }
+    class GlobalFuncsForAESCTR <<EncriptByteArrayByAESCTR(key []byte, plainmessage []byte) (crypticmessage []byte, mac []byte, err error)>> \
+                               <<EncriptStringByAESCTR(key []byte, plainmessage string) (crypticmessage string, mac string, err error)>> \
+                               <<DecriptByteArrayByAESCTR(key []byte, crypticmessage []byte) (decriptedmessage []byte, err error)>> \
+                               <<DecriptByteArrayByAESCTRwithAuth(key []byte, crypticmessage []byte, originalmac []byte) (decriptedmessage []byte, authresult bool, err error)>> \
+                               <<DecriptStringByAESCTR(key []byte, crypticmessage string) (decriptedmessage string, err error)>> \
+                               <<DecriptStringByAESCTRwithAuth(key []byte, crypticmessage string, originalmac string) (decriptedmessage string, authresult bool, err error)>>
     class AESGCM << (S,Aquamarine) >> {
         - key []byte
         - plainmessage []byte
@@ -40,6 +46,10 @@ namespace message {
         + GetDecriptedMessage() []byte
 
     }
+    class GlobalFuncsForAESGCM <<EncriptByteArrayByAESGCM(key []byte, plainmessage []byte, aad []byte) (crypticmessage []byte, err error)>> \
+                               <<EncriptStringByAESGCM(key []byte, plainmessage string, aad []byte) (crypticmessage string, err error)>> \
+                               <<DecriptByteArrayByAESGCM(key []byte, crypticmessage []byte, aad []byte) (decriptedmessage []byte, err error)>> \
+                               <<DecriptStringByAESGCM(key []byte, crypticmessage string, aad []byte) (decriptedmessage string, err error)>>
 }
 
 
