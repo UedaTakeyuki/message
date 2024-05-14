@@ -150,6 +150,7 @@ For more examples, refer [Test_01_test.go](test/Test_01_test.go)
 ## structure
 ### hight level API
 ![](docs/global.png)
+
 According to this [answer](https://softwareengineering.stackexchange.com/a/302170/444238), I've expressed global functions with stereotype.
 
 ### class interface
